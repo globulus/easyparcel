@@ -1,1 +1,1 @@
-include ':app', ':enumbuilder2', ':easyparcel', ':EasyParcel', ':easyparcel-processor', ':easyparcel-annotations'
+include ':app', ':easyparcel', ':easyparcel-processor', ':easyparcel-annotations'
