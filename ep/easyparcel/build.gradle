@@ -1,4 +1,14 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.neenbedankt.android-apt'
+
+group='com.github.globulus'
+
+ext {
+    PUBLISH_GROUP_ID = 'net.globulus'
+    PUBLISH_ARTIFACT_ID = 'easyparcel'
+    PUBLISH_VERSION = '0.0.1'
+}
 
 android {
     compileSdkVersion 23
@@ -28,4 +38,14 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:23.4.0'
     testCompile 'junit:junit:4.12'
+    compile project(path: ':easyparcel-annotations')
 }
+
+task processorTask(type: Exec) {
+    commandLine 'cp', '../easyparcel-processor/build/libs/easyparcel-processor.jar', 'libs/'
+}
+
+processorTask.dependsOn(':easyparcel-processor:build')
+preBuild.dependsOn(processorTask)
+
+apply from: 'https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle'
