@@ -1,1 +1,0 @@
-include ':app', ':easyparcel', ':easyparcel-processor', ':easyparcel-annotations'
