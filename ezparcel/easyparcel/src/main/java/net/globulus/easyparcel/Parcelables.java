@@ -33,9 +33,9 @@ public final class Parcelables {
 		return sParcelerList.getParcelerForClass(clazz);
 	}
 
-	public static <T extends Parcelable> void addToParcel(@NonNull T object,
-														  @NonNull Parcel dest,
-														  int flags) {
+	public static <T extends Parcelable> void writeToParcel(@NonNull T object,
+															@NonNull Parcel dest,
+															int flags) {
 		Class<?> clazz = object.getClass();
 		do {
 			Parceler parceler = getParcelerForClass(clazz);

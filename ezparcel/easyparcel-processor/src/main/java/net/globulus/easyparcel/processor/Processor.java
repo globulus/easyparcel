@@ -4,6 +4,7 @@ import net.globulus.easyparcel.annotation.EasyParcel;
 import net.globulus.easyparcel.annotation.Include;
 import net.globulus.easyparcel.processor.codegen.ParcelerCodeGen;
 import net.globulus.easyparcel.processor.codegen.ParcelerListCodeGen;
+import net.globulus.easyparcel.processor.util.ProcessorLog;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class Processor extends AbstractProcessor {
 
 			EasyParcel annotation = element.getAnnotation(EasyParcel.class);
 			boolean autoInclude = annotation.autoInclude();
-			Modifier[] ignoreModifiers = annotation.ignoreModifiers();
+			int[] ignoreModifiers = annotation.ignoreModifiers();
 //			boolean ignoreSuperclass = annotation.ignoreSuperclass(); TODO
 
 			List<? extends Element> memberFields = mElementUtils.getAllMembers((TypeElement) element);
@@ -96,10 +97,11 @@ public class Processor extends AbstractProcessor {
 					}
 
 					boolean ignoreField = false;
-					for (Modifier modifier : ignoreModifiers) {
-						if (modifiers.contains(modifier)) {
+					for (int modifier : ignoreModifiers) {
+						Modifier javaxModifier = mapToJavax(element, modifier);
+						if (modifiers.contains(javaxModifier)) {
 							ProcessorLog.note(member, "Ignoring field %s because it is %s",
-									member.getSimpleName(), modifier.toString());
+									member.getSimpleName(), javaxModifier.toString());
 							ignoreField = true;
 							break;
 						}
@@ -157,6 +159,36 @@ public class Processor extends AbstractProcessor {
 					"Element %s is annotated with @%s but is not a class. Only Classes are supported",
 					element.getSimpleName(), EasyParcel.class.getSimpleName());
 			return false;
+		}
+	}
+
+	private Modifier mapToJavax(Element element, int modifier) {
+		switch (modifier) {
+			case java.lang.reflect.Modifier.ABSTRACT:
+				return Modifier.ABSTRACT;
+			case java.lang.reflect.Modifier.PUBLIC:
+				return Modifier.PUBLIC;
+			case java.lang.reflect.Modifier.PRIVATE:
+				return Modifier.PRIVATE;
+			case java.lang.reflect.Modifier.PROTECTED:
+				return Modifier.PROTECTED;
+			case java.lang.reflect.Modifier.FINAL:
+				return Modifier.FINAL;
+			case java.lang.reflect.Modifier.STATIC:
+				return Modifier.STATIC;
+			case java.lang.reflect.Modifier.TRANSIENT:
+				return Modifier.TRANSIENT;
+			case java.lang.reflect.Modifier.VOLATILE:
+				return Modifier.VOLATILE;
+			case java.lang.reflect.Modifier.SYNCHRONIZED:
+				return Modifier.SYNCHRONIZED;
+			case java.lang.reflect.Modifier.STRICT:
+				return Modifier.STRICTFP;
+			case java.lang.reflect.Modifier.NATIVE:
+				return Modifier.NATIVE;
+			default:
+				ProcessorLog.error(element, "Wrong modifier used: " + modifier);
+				return null;
 		}
 	}
 }

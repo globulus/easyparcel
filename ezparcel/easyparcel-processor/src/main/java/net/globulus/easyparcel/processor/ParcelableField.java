@@ -3,6 +3,7 @@ package net.globulus.easyparcel.processor;
 import net.globulus.easyparcel.processor.codegen.FieldCodeGen;
 import net.globulus.easyparcel.processor.codegen.SupportedTypes;
 import net.globulus.easyparcel.processor.util.CodeGenInfo;
+import net.globulus.easyparcel.processor.util.ProcessorLog;
 
 import java.util.List;
 

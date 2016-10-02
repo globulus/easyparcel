@@ -1,4 +1,4 @@
-package net.globulus.easyparcel.processor;
+package net.globulus.easyparcel.processor.util;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;

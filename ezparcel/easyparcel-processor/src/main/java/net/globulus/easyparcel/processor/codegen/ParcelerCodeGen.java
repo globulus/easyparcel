@@ -2,7 +2,7 @@ package net.globulus.easyparcel.processor.codegen;
 
 import net.globulus.easyparcel.annotation.EasyParcel;
 import net.globulus.easyparcel.processor.ParcelableField;
-import net.globulus.easyparcel.processor.ProcessorLog;
+import net.globulus.easyparcel.processor.util.ProcessorLog;
 import net.globulus.easyparcel.processor.util.FrameworkUtil;
 import net.globulus.easyparcel.processor.util.TypeUtils;
 

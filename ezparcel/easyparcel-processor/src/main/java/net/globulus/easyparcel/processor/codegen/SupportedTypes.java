@@ -1,6 +1,6 @@
 package net.globulus.easyparcel.processor.codegen;
 
-import net.globulus.easyparcel.processor.ProcessorLog;
+import net.globulus.easyparcel.processor.util.ProcessorLog;
 import net.globulus.easyparcel.processor.codegen.android.BundleCodeGen;
 import net.globulus.easyparcel.processor.codegen.android.ParcelableCodeGen;
 import net.globulus.easyparcel.processor.codegen.android.SparseBooleanCodeGen;
