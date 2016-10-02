@@ -60,7 +60,6 @@ public final class Parcelables {
 		} while (clazz != null);
 	}
 
-	@NonNull
 	public static <T extends Parcelable> Parcelable.Creator<T> getCreator(@NonNull Class<T> clazz) {
 		Parceler<T> parceler = getParcelerForClass(clazz);
 		return parceler.getCreator();

@@ -35,7 +35,6 @@ public class ParcelerCodeGen {
 
     public String generate(TypeElement classElement, List<ParcelableField> fields) throws Exception {
 
-
         String classSuffix = FrameworkUtil.getParcelerClassExtension();
         String packageName = TypeUtils.getPackageName(elementUtils, classElement);
         String binaryName = TypeUtils.getBinaryName(elementUtils, classElement);
@@ -127,23 +126,29 @@ public class ParcelerCodeGen {
 		jw.emitEmptyLine();
         generateReadFromParcel(jw, originFullQualifiedName, fields);
 
-		jw.beginType(creatorClassName, "class", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC),
-				null, "Parcelable.Creator<" + originalClassName + ">");
-		jw.beginMethod(originalClassName, "createFromParcel", EnumSet.of(Modifier.PUBLIC), "Parcel", "in");
-		jw.emitStatement(originalClassName + " object =  new " + originalClassName + "()");
-		jw.emitStatement("Parcelables.readFromParcel(object, in)");
-		jw.emitStatement("return object");
-		jw.endMethod();
-		jw.beginMethod(originalClassName + "[]", "newArray", EnumSet.of(Modifier.PUBLIC), "int", "size");
-		jw.emitStatement("return new " + originalClassName + "[size]");
-		jw.endMethod();
-		jw.endType();
+		boolean isAbstract = classElement.getModifiers().contains(Modifier.ABSTRACT);
+		if (!isAbstract) {
+			jw.beginType(creatorClassName, "class", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC),
+					null, "Parcelable.Creator<" + originalClassName + ">");
+			jw.beginMethod(originalClassName, "createFromParcel", EnumSet.of(Modifier.PUBLIC), "Parcel", "in");
+			jw.emitStatement(originalClassName + " object =  new " + originalClassName + "()");
+			jw.emitStatement("Parcelables.readFromParcel(object, in)");
+			jw.emitStatement("return object");
+			jw.endMethod();
+			jw.beginMethod(originalClassName + "[]", "newArray", EnumSet.of(Modifier.PUBLIC), "int", "size");
+			jw.emitStatement("return new " + originalClassName + "[size]");
+			jw.endMethod();
+			jw.endType();
 
-		jw.emitField(creatorClassName, "CREATOR", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL),
-				"new " + creatorClassName + "()");
-
+			jw.emitField(creatorClassName, "CREATOR", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL),
+					"new " + creatorClassName + "()");
+		}
 		jw.beginMethod("Parcelable.Creator<" + originalClassName + ">", "getCreator", EnumSet.of(Modifier.PUBLIC));
-		jw.emitStatement("return CREATOR");
+		if (isAbstract) {
+			jw.emitStatement("return null");
+		} else {
+			jw.emitStatement("return CREATOR");
+		}
 		jw.endMethod();
 
 		jw.endType();
