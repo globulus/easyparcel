@@ -100,8 +100,8 @@ public class Processor extends AbstractProcessor {
 					for (int modifier : ignoreModifiers) {
 						Modifier javaxModifier = mapToJavax(element, modifier);
 						if (modifiers.contains(javaxModifier)) {
-							ProcessorLog.note(member, "Ignoring field %s because it is %s",
-									member.getSimpleName(), javaxModifier.toString());
+//							ProcessorLog.note(member, "Ignoring field %s because it is %s",
+//									member.getSimpleName(), javaxModifier.toString());
 							ignoreField = true;
 							break;
 						}
