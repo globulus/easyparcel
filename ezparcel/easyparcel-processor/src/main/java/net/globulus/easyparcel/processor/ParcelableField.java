@@ -1,6 +1,7 @@
 package net.globulus.easyparcel.processor;
 
-import net.globulus.easyparcel.processor.codegenerator.SupportedTypes;
+import net.globulus.easyparcel.processor.codegen.FieldCodeGen;
+import net.globulus.easyparcel.processor.codegen.SupportedTypes;
 import net.globulus.easyparcel.processor.util.CodeGenInfo;
 
 import java.util.List;
@@ -19,17 +20,15 @@ import javax.lang.model.util.Types;
  */
 public class ParcelableField {
 
-	private String fieldName;
+	private String mFieldName;
 	private String type;
 	private Element element;
-	private net.globulus.easyparcel.processor.codegenerator.FieldCodeGen codeGenerator;
+	private FieldCodeGen codeGenerator;
 	private TypeMirror genericsTypeArgument;
-	private String baggerFullyQualifiedName;
 
 	public ParcelableField(VariableElement element, Elements elementUtils, Types typeUtils) {
-
 		this.element = element;
-		fieldName = element.getSimpleName().toString();
+		mFieldName = element.getSimpleName().toString();
 		type = element.asType().toString();
 
 		CodeGenInfo res = SupportedTypes.getCodeGenInfo(element, elementUtils, typeUtils);
@@ -79,19 +78,15 @@ public class ParcelableField {
 		return element;
 	}
 
-	public String getFieldName() {
-		return fieldName;
+	public String getmFieldName() {
+		return mFieldName;
 	}
 
 	public String getType() {
 		return type;
 	}
 
-	public String getFullQualifiedBaggerName() {
-		return baggerFullyQualifiedName;
-	}
-
-	public net.globulus.easyparcel.processor.codegenerator.FieldCodeGen getCodeGenerator() {
+	public FieldCodeGen getCodeGenerator() {
 		return codeGenerator;
 	}
 

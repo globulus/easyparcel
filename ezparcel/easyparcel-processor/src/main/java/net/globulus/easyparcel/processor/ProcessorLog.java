@@ -11,9 +11,7 @@ public class ProcessorLog {
 
 	private static ProcessingEnvironment sEnv;
 
-	private ProcessorLog(ProcessingEnvironment processingEnvironment) {
-		this.sEnv = processingEnvironment;
-	}
+	private ProcessorLog() { }
 
 	public static void init(ProcessingEnvironment processingEnv) {
 		sEnv = processingEnv;

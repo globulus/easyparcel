@@ -1,11 +1,9 @@
-package net.globulus.easyparcel.processor.codegenerator;
-
-import javawriter.JavaWriter;
+package net.globulus.easyparcel.processor.codegen;
 
 import net.globulus.easyparcel.annotation.EasyParcel;
 import net.globulus.easyparcel.processor.ParcelableField;
 import net.globulus.easyparcel.processor.ProcessorLog;
-import net.globulus.easyparcel.processor.util.ProcessorUtil;
+import net.globulus.easyparcel.processor.util.FrameworkUtil;
 import net.globulus.easyparcel.processor.util.TypeUtils;
 
 import java.io.IOException;
@@ -19,23 +17,18 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.JavaFileObject;
 
-public class CodeGenerator {
+import javawriter.JavaWriter;
 
-    public static final String PARAM_TARGET = "target";
+import static net.globulus.easyparcel.processor.util.FrameworkUtil.PARAM_FLAGS;
+import static net.globulus.easyparcel.processor.util.FrameworkUtil.PARAM_PARCEL;
+import static net.globulus.easyparcel.processor.util.FrameworkUtil.PARAM_TARGET;
 
-    public static final String PARAM_SOURCE = "source";
-
-    public static final String PARAM_FLAGS = "flags";
-
-    /**
-     * The parameter name for the
-     */
-    public static final String PARAM_PARCEL = "parcel";
+public class ParcelerCodeGen {
 
     private Filer filer;
     private Elements elementUtils;
 
-    public CodeGenerator(Elements elementUtils, Filer filer) {
+    public ParcelerCodeGen(Elements elementUtils, Filer filer) {
         this.filer = filer;
         this.elementUtils = elementUtils;
     }
@@ -43,7 +36,7 @@ public class CodeGenerator {
     public String generate(TypeElement classElement, List<ParcelableField> fields) throws Exception {
 
 
-        String classSuffix = ProcessorUtil.getParcelerClassExtension();
+        String classSuffix = FrameworkUtil.getParcelerClassExtension();
         String packageName = TypeUtils.getPackageName(elementUtils, classElement);
         String binaryName = TypeUtils.getBinaryName(elementUtils, classElement);
 
@@ -60,7 +53,6 @@ public class CodeGenerator {
         }
         String qualifiedName = binaryName + classSuffix;
 
-		String parcelClassName = "android.os.Parcel";
 //		Class parcelType = Class.forName("android.os.Parcel");
 
 //		MethodSpec createFromParcel = MethodSpec
@@ -115,15 +107,16 @@ public class CodeGenerator {
 //        MethodSpec.Builder builder = new JavaWriter(writer);
 //
 		jw.emitPackage(packageName);
-		jw.emitImports(parcelClassName);
+		jw.emitImports(FrameworkUtil.PARCEL_QUALIFIED_NAME);
 		jw.emitImports("android.os.Parcelable");
 		jw.emitImports("android.os.Parcelable.Creator");
-		jw.emitImports("net.globulus.easyparcel.Parceler");
-		jw.emitImports("net.globulus.easyparcel.Parcelables");
+		jw.emitImports(FrameworkUtil.getQualifiedName(FrameworkUtil.getParcelerClassName()));
+		jw.emitImports(FrameworkUtil.getQualifiedName(FrameworkUtil.getParcelablesClassName()));
 		jw.emitEmptyLine();
 		jw.emitJavadoc("Generated class by @%s . Do not modify this code!",
                 EasyParcel.class.getSimpleName());
-		jw.beginType(className, "class", EnumSet.of(Modifier.PUBLIC), null, "Parceler<" + originalClassName + ">");
+		jw.beginType(className, "class", EnumSet.of(Modifier.PUBLIC), null,
+				FrameworkUtil.getParcelerClassName() + "<" + originalClassName + ">");
 		jw.emitEmptyLine();
 //
 
@@ -134,7 +127,8 @@ public class CodeGenerator {
 		jw.emitEmptyLine();
         generateReadFromParcel(jw, originFullQualifiedName, fields);
 
-		jw.beginType(creatorClassName, "class", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC), null, "Parcelable.Creator<" + originalClassName + ">");
+		jw.beginType(creatorClassName, "class", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC),
+				null, "Parcelable.Creator<" + originalClassName + ">");
 		jw.beginMethod(originalClassName, "createFromParcel", EnumSet.of(Modifier.PUBLIC), "Parcel", "in");
 		jw.emitStatement(originalClassName + " object =  new " + originalClassName + "()");
 		jw.emitStatement("Parcelables.readFromParcel(object, in)");
@@ -145,7 +139,8 @@ public class CodeGenerator {
 		jw.endMethod();
 		jw.endType();
 
-		jw.emitField(creatorClassName, "CREATOR", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL), "new " + creatorClassName + "()");
+		jw.emitField(creatorClassName, "CREATOR", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL),
+				"new " + creatorClassName + "()");
 
 		jw.beginMethod("Parcelable.Creator<" + originalClassName + ">", "getCreator", EnumSet.of(Modifier.PUBLIC));
 		jw.emitStatement("return CREATOR");
@@ -181,8 +176,8 @@ public class CodeGenerator {
      */
     private void generateWriteToParcel(JavaWriter jw, String origin,
             List<ParcelableField> fields) throws IOException {
-		jw.beginMethod("void", "writeToParcel", EnumSet.of(Modifier.PUBLIC),
-				origin, PARAM_SOURCE, "Parcel", PARAM_PARCEL);
+		jw.beginMethod("void", "writeToParcel", EnumSet.of(Modifier.PUBLIC), origin,
+				FrameworkUtil.PARAM_SOURCE, "Parcel", FrameworkUtil.PARAM_PARCEL, "int", PARAM_FLAGS);
 
 		for (ParcelableField field : fields) {
 			FieldCodeGen gen = field.getCodeGenerator();
@@ -190,9 +185,9 @@ public class CodeGenerator {
 			if (gen == null) { // Already checked before, but let's check it again
 				ProcessorLog.error(field.getElement(),
 						"The field %s is not Parcelable or of unsupported type",
-						field.getFieldName());
+						field.getmFieldName());
 
-				throw new IOException("Unparcelable Field " + field.getFieldName());
+				throw new IOException("Unparcelable Field " + field.getmFieldName());
 			}
 
 			jw.emitEmptyLine();
@@ -215,9 +210,9 @@ public class CodeGenerator {
 			if (gen == null) { // Already checked before, but let's check it again
 				ProcessorLog.error(field.getElement(),
 						"The field %s is not Parcelable or of unsupported type",
-						field.getFieldName());
+						field.getmFieldName());
 
-				throw new IOException("Unparcelable Field " + field.getFieldName());
+				throw new IOException("Unparcelable Field " + field.getmFieldName());
 			}
 
 			jw.emitEmptyLine();

@@ -1,14 +1,13 @@
 package net.globulus.easyparcel.processor;
 
-import net.globulus.easyparcel.annotation.Add;
 import net.globulus.easyparcel.annotation.EasyParcel;
-import net.globulus.easyparcel.processor.codegenerator.CodeGenerator;
+import net.globulus.easyparcel.annotation.Include;
+import net.globulus.easyparcel.processor.codegen.ParcelerCodeGen;
+import net.globulus.easyparcel.processor.codegen.ParcelerListCodeGen;
 
-import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,20 +23,17 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.tools.JavaFileObject;
-
-import javawriter.JavaWriter;
 
 public class Processor extends AbstractProcessor {
 
 	private static final List<Class<? extends Annotation>> ANNOTATIONS = Arrays.asList(
 			EasyParcel.class,
-			Add.class
+			Include.class
 	);
 
-	private Elements elementUtils;
-	private Types typeUtils;
-	private Filer filer;
+	private Elements mElementUtils;
+	private Types mTypeUtils;
+	private Filer mFiler;
 
 	@Override
 	public synchronized void init(ProcessingEnvironment env) {
@@ -45,21 +41,9 @@ public class Processor extends AbstractProcessor {
 
 		ProcessorLog.init(env);
 
-//		String sdk = env.getOptions().get(OPTION_SDK_INT);
-//		if (sdk != null) {
-//			try {
-//				this.sdk = Integer.parseInt(sdk);
-//			} catch (NumberFormatException e) {
-//				env.getMessager()
-//						.printMessage(Diagnostic.Kind.WARNING, "Unable to parse supplied minSdk option '"
-//								+ sdk
-//								+ "'. Falling back to API 1 support.");
-//			}
-//		}
-
-		elementUtils = env.getElementUtils();
-		typeUtils = env.getTypeUtils();
-		filer = env.getFiler();
+		mElementUtils = env.getElementUtils();
+		mTypeUtils = env.getTypeUtils();
+		mFiler = env.getFiler();
 	}
 
 	@Override
@@ -76,7 +60,7 @@ public class Processor extends AbstractProcessor {
 
 		List<String> annotatedClasses = new ArrayList<>();
 		List<String> parcelerNames = new ArrayList<>();
-		CodeGenerator codeGenerator = new CodeGenerator(elementUtils, filer);
+		ParcelerCodeGen parcelerCodeGen = new ParcelerCodeGen(mElementUtils, mFiler);
 		Element lastElement = null;
 		for (Element element : roundEnv.getElementsAnnotatedWith(EasyParcel.class)) {
 			if (!isValid(element)) {
@@ -87,59 +71,43 @@ public class Processor extends AbstractProcessor {
 
 			lastElement = element;
 
-//			ParcelablePlease annotation = element.getAnnotation(ParcelablePlease.class);
-//			boolean allFields = annotation.allFields();
-//			boolean ignorePrivateFields = annotation.ignorePrivateFields();
+			EasyParcel annotation = element.getAnnotation(EasyParcel.class);
+			boolean autoInclude = annotation.autoInclude();
+			Modifier[] ignoreModifiers = annotation.ignoreModifiers();
+//			boolean ignoreSuperclass = annotation.ignoreSuperclass(); TODO
 
-			List<? extends Element> memberFields = elementUtils.getAllMembers((TypeElement) element);
+			List<? extends Element> memberFields = mElementUtils.getAllMembers((TypeElement) element);
 
 			if (memberFields != null) {
 				for (Element member : memberFields) {
-					// Search for fields
-
 					if (member.getKind() != ElementKind.FIELD || !(member instanceof VariableElement)) {
-						continue; // Not a field, so go on
-					}
-
-					// it's a field, so go on
-
-//					ParcelableNoThanks skipFieldAnnotation = member.getAnnotation(ParcelableNoThanks.class);
-//					if (skipFieldAnnotation != null) {
-//						// Field is marked as not parcelabel, so continue with the next
-//						continue;
-//					}
-
-//					if (!allFields) {
-//						ParcelableThisPlease fieldAnnotated = member.getAnnotation(ParcelableThisPlease.class);
-//						if (fieldAnnotated == null) {
-//							// Not all fields should parcelable,
-//							// and this field is not annotated as parcelable, so skip this field
-//							continue;
-//						}
-//					}
-
-					// Check the visibility of the field and modifiers
-					Set<Modifier> modifiers = member.getModifiers();
-
-					if (modifiers.contains(Modifier.STATIC)) {
-						// Static fields are skipped
 						continue;
 					}
 
-//					if (modifiers.contains(Modifier.PRIVATE)) {
-//
-////						if (ignorePrivateFields) {
-////							continue;
-////						}
-//
-//						ProcessorLog.error(member,
-//								"The field %s  in %s is private. At least default package visibility is required "
-//										+ "or annotate this field as not been parcelable with @%s "
-//										+ "or configure this class to ignore private fields "
-//										+ "with @%s( ignorePrivateFields = true )", member.getSimpleName(),
-//								element.getSimpleName(), ParcelableNoThanks.class.getSimpleName(),
-//								ParcelablePlease.class.getSimpleName());
-//					}
+					if (!autoInclude) {
+						Include fieldAnnotated = member.getAnnotation(Include.class);
+						if (fieldAnnotated == null) {
+							continue;
+						}
+					}
+
+					Set<Modifier> modifiers = member.getModifiers();
+					if (modifiers.contains(Modifier.STATIC)) {
+						continue;
+					}
+
+					boolean ignoreField = false;
+					for (Modifier modifier : ignoreModifiers) {
+						if (modifiers.contains(modifier)) {
+							ProcessorLog.note(member, "Ignoring field %s because it is %s",
+									member.getSimpleName(), modifier.toString());
+							ignoreField = true;
+							break;
+						}
+					}
+					if (ignoreField) {
+						continue;
+					}
 
 					if (modifiers.contains(Modifier.FINAL)) {
 						ProcessorLog.error(member,
@@ -147,76 +115,21 @@ public class Processor extends AbstractProcessor {
 								member.getSimpleName());
 					}
 
-					// If we are here the field is be parcelable
-					fields.add(new ParcelableField((VariableElement) member, elementUtils, typeUtils));
+					fields.add(new ParcelableField((VariableElement) member, mElementUtils, mTypeUtils));
 				}
 			}
 
-			//
-			// Generate the code
-			//
 			try {
 				TypeElement classElement = (TypeElement) element;
-				String name = codeGenerator.generate(classElement, fields);
+				String name = parcelerCodeGen.generate(classElement, fields);
 				annotatedClasses.add(classElement.getQualifiedName().toString());
 				parcelerNames.add(name);
 			} catch (Exception e) {
 				e.printStackTrace();
-//				ProcessorMessage.error(lastElement, "An error has occurred while processing %s : %s",
-//						element.getSimpleName(), e.getMessage());
 			}
+
+			new ParcelerListCodeGen().generate(mFiler, lastElement, annotatedClasses, parcelerNames);
 		}
-
-			try {
-
-				String packageName = "net.globulus.easyparcel";
-				String className = "EasyParcelUtil";
-				String innerClassName = className + "Inner";
-
-				JavaFileObject jfo = filer.createSourceFile(packageName + "." + className, lastElement);
-				Writer writer = jfo.openWriter();
-				JavaWriter jw = new JavaWriter(writer);
-				jw.emitPackage(packageName);
-				jw.emitImports("java.util.Map");
-				jw.emitImports("java.util.HashMap");
-				jw.emitImports("android.os.Parcelable");
-				jw.emitImports("net.globulus.easyparcel.Parceler");
-				jw.emitImports("net.globulus.easyparcel.Parcelables");
-				jw.emitImports("net.globulus.easyparcel.ParcelerList");
-				jw.emitEmptyLine();
-
-				jw.emitJavadoc("Generated class by @%s . Do not modify this code!",
-						EasyParcel.class.getSimpleName());
-				jw.beginType(className, "class", EnumSet.of(Modifier.PUBLIC), null);
-				jw.emitEmptyLine();
-
-				jw.beginType(innerClassName, "class", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC), null, "ParcelerList");
-				jw.emitField("Map<Class<? extends Parcelable>, Parceler>", "map");
-				jw.beginConstructor(EnumSet.of(Modifier.PUBLIC));
-				jw.emitStatement("map = new HashMap<>()");
-				for (int i = 0; i < annotatedClasses.size(); i++) {
-					jw.emitStatement("map.put(" + annotatedClasses.get(i) + ".class, new " + parcelerNames.get(i) + "())");
-				}
-				jw.emitStatement("Parcelables.setParcelerList(this)");
-				jw.emitStatement("System.out.println(\"aaaaaaa\")");
-				jw.endConstructor();
-
-				jw.beginMethod("<T extends Parcelable> Parceler<T>", "getParcelerForClass",
-						EnumSet.of(Modifier.PUBLIC), "Class<T>", "clazz");
-				jw.emitStatement("return map.get(clazz)");
-				jw.endMethod();
-				jw.endType();
-
-				jw.emitField(innerClassName, "INSTANCE", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL),
-						"new " + innerClassName + "()");
-
-
-				jw.endType();
-				jw.close();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 
 		return true;
 	}
@@ -239,7 +152,6 @@ public class Processor extends AbstractProcessor {
 				return false;
 			}
 
-			// Ok, its a valid class
 			return true;
 		} else {
 			ProcessorLog.error(element,

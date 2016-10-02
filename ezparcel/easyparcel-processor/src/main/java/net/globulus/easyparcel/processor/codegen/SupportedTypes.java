@@ -1,18 +1,18 @@
-package net.globulus.easyparcel.processor.codegenerator;
+package net.globulus.easyparcel.processor.codegen;
 
 import net.globulus.easyparcel.processor.ProcessorLog;
-import net.globulus.easyparcel.processor.codegenerator.android.BundleCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.android.ParcelableCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.android.SparseBooleanCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.collection.AbsListCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.collection.ParcelableArrayCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.collection.PrimitiveArrayCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.collection.StringListCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.other.DateCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.other.SerializeableCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.primitives.BooleanCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.primitiveswrapper.AbsPrimitiveWrapperCodeGen;
-import net.globulus.easyparcel.processor.codegenerator.primitiveswrapper.BooleanWrapperCodeGen;
+import net.globulus.easyparcel.processor.codegen.android.BundleCodeGen;
+import net.globulus.easyparcel.processor.codegen.android.ParcelableCodeGen;
+import net.globulus.easyparcel.processor.codegen.android.SparseBooleanCodeGen;
+import net.globulus.easyparcel.processor.codegen.collection.GenericListCodeGen;
+import net.globulus.easyparcel.processor.codegen.collection.ParcelableArrayCodeGen;
+import net.globulus.easyparcel.processor.codegen.collection.PrimitiveArrayCodeGen;
+import net.globulus.easyparcel.processor.codegen.collection.StringListCodeGen;
+import net.globulus.easyparcel.processor.codegen.other.DateCodeGen;
+import net.globulus.easyparcel.processor.codegen.other.SerializeableCodeGen;
+import net.globulus.easyparcel.processor.codegen.primitives.BooleanCodeGen;
+import net.globulus.easyparcel.processor.codegen.primitiveswrapper.GenericPrimitiveWrapperCodeGen;
+import net.globulus.easyparcel.processor.codegen.primitiveswrapper.BooleanWrapperCodeGen;
 import net.globulus.easyparcel.processor.util.CodeGenInfo;
 
 import java.util.ArrayList;
@@ -68,35 +68,34 @@ public class SupportedTypes {
     typeMap = new HashMap<String, FieldCodeGen>();
 
     // primitives
-    typeMap.put(byte.class.getCanonicalName(), new AbsCodeGen("Byte"));
+    typeMap.put(byte.class.getCanonicalName(), new GenericCodeGen("Byte"));
     typeMap.put(boolean.class.getCanonicalName(), new BooleanCodeGen());
-    typeMap.put(double.class.getCanonicalName(), new AbsCodeGen("Double"));
-    typeMap.put(float.class.getCanonicalName(), new AbsCodeGen("Float"));
-    typeMap.put(int.class.getCanonicalName(), new AbsCodeGen("Int"));
-    typeMap.put(long.class.getCanonicalName(), new AbsCodeGen("Long"));
-    typeMap.put(String.class.getCanonicalName(), new AbsCodeGen("String"));
+    typeMap.put(double.class.getCanonicalName(), new GenericCodeGen("Double"));
+    typeMap.put(float.class.getCanonicalName(), new GenericCodeGen("Float"));
+    typeMap.put(int.class.getCanonicalName(), new GenericCodeGen("Int"));
+    typeMap.put(long.class.getCanonicalName(), new GenericCodeGen("Long"));
+    typeMap.put(String.class.getCanonicalName(), new GenericCodeGen("String"));
 
     // Wrapper classes
-    typeMap.put(Byte.class.getCanonicalName(), new AbsPrimitiveWrapperCodeGen("Byte"));
+    typeMap.put(Byte.class.getCanonicalName(), new GenericPrimitiveWrapperCodeGen("Byte"));
     typeMap.put(Boolean.class.getCanonicalName(), new BooleanWrapperCodeGen());
-    typeMap.put(Double.class.getCanonicalName(), new AbsPrimitiveWrapperCodeGen("Double"));
-    typeMap.put(Float.class.getCanonicalName(), new AbsPrimitiveWrapperCodeGen("Float"));
-    typeMap.put(Integer.class.getCanonicalName(), new AbsPrimitiveWrapperCodeGen("Int"));
-    typeMap.put(Long.class.getCanonicalName(), new AbsPrimitiveWrapperCodeGen("Long"));
+    typeMap.put(Double.class.getCanonicalName(), new GenericPrimitiveWrapperCodeGen("Double"));
+    typeMap.put(Float.class.getCanonicalName(), new GenericPrimitiveWrapperCodeGen("Float"));
+    typeMap.put(Integer.class.getCanonicalName(), new GenericPrimitiveWrapperCodeGen("Int"));
+    typeMap.put(Long.class.getCanonicalName(), new GenericPrimitiveWrapperCodeGen("Long"));
 
     // Android
     typeMap.put(TYPE_KEY_PARCELABLE, new ParcelableCodeGen());
     typeMap.put(TYPE_KEY_BUNDLE, new BundleCodeGen());
     typeMap.put(TYPE_KEY_SPARSE_BOOLEAN_ARRAY, new SparseBooleanCodeGen());
-    // typeMap.put(TYPE_KEY_SPARSE_ARRAY, new SparseArrayCodeGen()); // TODO implement
 
     // Lists
     typeMap.put(TYPE_KEY_STRING_LIST, new StringListCodeGen());
-    typeMap.put(TYPE_KEY_PARCELABLE_LIST, new AbsListCodeGen(ArrayList.class.getName()));
-    typeMap.put(TYPE_KEY_PARCELABLE_ARRAYLIST, new AbsListCodeGen(ArrayList.class.getName()));
-    typeMap.put(TYPE_KEY_PARCELABLE_LINKEDLIST, new AbsListCodeGen(LinkedList.class.getName()));
+    typeMap.put(TYPE_KEY_PARCELABLE_LIST, new GenericListCodeGen(ArrayList.class.getName()));
+    typeMap.put(TYPE_KEY_PARCELABLE_ARRAYLIST, new GenericListCodeGen(ArrayList.class.getName()));
+    typeMap.put(TYPE_KEY_PARCELABLE_LINKEDLIST, new GenericListCodeGen(LinkedList.class.getName()));
     typeMap.put(TYPE_KEY_PARCELABLE_COPYONWRITEARRAYLIST,
-        new AbsListCodeGen(CopyOnWriteArrayList.class.getName()));
+        new GenericListCodeGen(CopyOnWriteArrayList.class.getName()));
 
     // Arrays
     typeMap.put(TYPE_KEY_BOOL_ARRAY, new PrimitiveArrayCodeGen("BooleanArray", "boolean"));

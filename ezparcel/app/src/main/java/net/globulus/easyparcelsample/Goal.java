@@ -39,6 +39,6 @@ public class Goal implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		Parcelables.addToParcel(this, dest);
+		Parcelables.addToParcel(this, dest, flags);
 	}
 }

@@ -5,6 +5,8 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import net.globulus.easyparcel.processor.util.FrameworkUtil;
+
 /**
  * Created by gordanglavas on 29/09/16.
  */
@@ -22,7 +24,8 @@ public final class Parcelables {
 	private static Parceler getParcelerForClass(@NonNull Class clazz) {
 		if (sParcelerList == null) {
 			try {
-				Class c = Class.forName("net.globulus.easyparcel.EasyParcelUtil");
+				// Initiate class loading for the ParcelerList implementation class
+				Class.forName(FrameworkUtil.getQualifiedName(FrameworkUtil.getParcelerListImplClassName()));
 			} catch (ClassNotFoundException e) {
 				throw new AssertionError(e);  // Can't happen
 			}
@@ -30,23 +33,28 @@ public final class Parcelables {
 		return sParcelerList.getParcelerForClass(clazz);
 	}
 
-	public static <T extends Parcelable> void addToParcel(@NonNull T object, @NonNull Parcel dest) {
+	public static <T extends Parcelable> void addToParcel(@NonNull T object,
+														  @NonNull Parcel dest,
+														  int flags) {
 		Class<?> clazz = object.getClass();
 		do {
 			Parceler parceler = getParcelerForClass(clazz);
 			if (parceler != null) {
-				parceler.writeToParcel(object, dest);
+				parceler.writeToParcel(object, dest, flags);
+				break;
 			}
 			clazz = clazz.getSuperclass();
 		} while (clazz != null);
 	}
 
-	public static <T extends Parcelable> void readFromParcel(@NonNull T object, @NonNull Parcel in) {
+	public static <T extends Parcelable> void readFromParcel(@NonNull T object,
+															 @NonNull Parcel in) {
 		Class<?> clazz = object.getClass();
 		do {
 			Parceler parceler = getParcelerForClass(clazz);
 			if (parceler != null) {
 				parceler.readFromParcel(object, in);
+				break;
 			}
 			clazz = clazz.getSuperclass();
 		} while (clazz != null);

@@ -9,7 +9,7 @@ import android.os.Parcelable;
 
 public interface Parceler<T extends Parcelable> {
 
-	void writeToParcel(T source, Parcel dest);
+	void writeToParcel(T source, Parcel dest, int flags);
 	void readFromParcel(T target, Parcel in);
 	Parcelable.Creator<T> getCreator();
 }
