@@ -135,6 +135,15 @@ public class Processor extends AbstractProcessor {
 
 	private boolean isValid(Element element) {
 		if (element.getKind() == ElementKind.CLASS) {
+//			if (element.getModifiers().contains(Modifier.ABSTRACT)) {
+//				ProcessorLog.error(element,
+//						"Element %s is annotated with @%s but is an abstract class. "
+//								+ "Abstract classes can not be annotated. Annotate the concrete class "
+//								+ "that implements all abstract methods with @%s", element.getSimpleName(),
+//						EasyParcel.class.getSimpleName(), EasyParcel.class.getSimpleName());
+//				return false;
+//			}
+
 			if (element.getModifiers().contains(Modifier.PRIVATE)) {
 				ProcessorLog.error(element, "The private class %s is annotated with @%s. "
 								+ "Private classes are not supported because of lacking visibility.",
