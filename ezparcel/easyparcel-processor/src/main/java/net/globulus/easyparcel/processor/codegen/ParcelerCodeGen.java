@@ -111,6 +111,7 @@ public class ParcelerCodeGen {
 		jw.emitImports("android.os.Parcelable.Creator");
 		jw.emitImports(FrameworkUtil.getQualifiedName(FrameworkUtil.getParcelerClassName()));
 		jw.emitImports(FrameworkUtil.getQualifiedName(FrameworkUtil.getParcelablesClassName()));
+		jw.emitImports(originFullQualifiedName);
 		jw.emitEmptyLine();
 		jw.emitJavadoc("Generated class by @%s . Do not modify this code!",
                 EasyParcel.class.getSimpleName());
