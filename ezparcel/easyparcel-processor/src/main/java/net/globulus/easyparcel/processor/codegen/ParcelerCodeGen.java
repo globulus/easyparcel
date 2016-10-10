@@ -43,7 +43,7 @@ public class ParcelerCodeGen {
 
         String originFullQualifiedName = classElement.getQualifiedName().toString();
 //        Class originalType = Class.forName(originFullQualifiedName);
-		String parcelerClassName = originalClassName + classSuffix;
+//		String parcelerClassName = originalClassName + classSuffix;
         String className;
         if (packageName.length() > 0) {
             className = binaryName.substring(packageName.length() + 1) + classSuffix;
@@ -172,7 +172,7 @@ public class ParcelerCodeGen {
 //		Writer srcWriter = filer.createSourceFile(parcelerClassName).openWriter();
 //		javaFile.writeTo(srcWriter);
 
-		return packageName + "." + parcelerClassName;
+		return packageName + "." + className;
     }
 
     /**
