@@ -17,7 +17,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.JavaFileObject;
 
-import javawriter.JavaWriter;
+import javawriter.EzpJavaWriter;
 
 import static net.globulus.easyparcel.processor.util.FrameworkUtil.PARAM_FLAGS;
 import static net.globulus.easyparcel.processor.util.FrameworkUtil.PARAM_PARCEL;
@@ -102,7 +102,7 @@ public class ParcelerCodeGen {
 
         JavaFileObject jfo = filer.createSourceFile(qualifiedName, classElement);
 		Writer writer = jfo.openWriter();
-		JavaWriter jw = new JavaWriter(writer);
+		EzpJavaWriter jw = new EzpJavaWriter(writer);
 //        MethodSpec.Builder builder = new JavaWriter(writer);
 //
 		jw.emitPackage(packageName);
@@ -180,8 +180,8 @@ public class ParcelerCodeGen {
      *
      * @throws IOException
      */
-    private void generateWriteToParcel(JavaWriter jw, String origin,
-            List<ParcelableField> fields) throws IOException {
+    private void generateWriteToParcel(EzpJavaWriter jw, String origin,
+									   List<ParcelableField> fields) throws IOException {
 		jw.beginMethod("void", "writeToParcel", EnumSet.of(Modifier.PUBLIC), origin,
 				FrameworkUtil.PARAM_SOURCE, "Parcel", FrameworkUtil.PARAM_PARCEL, "int", PARAM_FLAGS);
 
@@ -204,8 +204,8 @@ public class ParcelerCodeGen {
 
     }
 
-    private void generateReadFromParcel(JavaWriter jw, String originClass,
-            List<ParcelableField> fields) throws IOException {
+    private void generateReadFromParcel(EzpJavaWriter jw, String originClass,
+										List<ParcelableField> fields) throws IOException {
 
 		jw.beginMethod("void", "readFromParcel", EnumSet.of(Modifier.PUBLIC),
 				originClass, PARAM_TARGET, "Parcel", PARAM_PARCEL);

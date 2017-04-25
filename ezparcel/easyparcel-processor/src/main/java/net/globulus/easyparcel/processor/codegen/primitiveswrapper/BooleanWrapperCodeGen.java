@@ -5,7 +5,7 @@ import net.globulus.easyparcel.processor.codegen.FieldCodeGen;
 
 import java.io.IOException;
 
-import javawriter.JavaWriter;
+import javawriter.EzpJavaWriter;
 
 import static net.globulus.easyparcel.processor.util.FrameworkUtil.PARAM_PARCEL;
 import static net.globulus.easyparcel.processor.util.FrameworkUtil.PARAM_SOURCE;
@@ -14,7 +14,7 @@ import static net.globulus.easyparcel.processor.util.FrameworkUtil.PARAM_TARGET;
 public class BooleanWrapperCodeGen implements FieldCodeGen {
 
   @Override
-  public void generateWriteToParcel(ParcelableField field, JavaWriter jw) throws IOException  {
+  public void generateWriteToParcel(ParcelableField field, EzpJavaWriter jw) throws IOException  {
     jw.emitStatement("%s.writeByte((byte) (%s.%s != null ? 1 : 0))", PARAM_PARCEL,
         PARAM_SOURCE, field.getmFieldName());
     jw.beginControlFlow("if (%s.%s != null)", PARAM_SOURCE, field.getmFieldName());
@@ -24,7 +24,7 @@ public class BooleanWrapperCodeGen implements FieldCodeGen {
   }
 
   @Override
-  public void generateReadFromParcel(ParcelableField field, JavaWriter jw) throws IOException {
+  public void generateReadFromParcel(ParcelableField field, EzpJavaWriter jw) throws IOException {
     jw.emitStatement("boolean %sNullCheck", field.getmFieldName());
     jw.emitStatement("%sNullCheck = (%s.readByte() == 1)", field.getmFieldName(),
         PARAM_PARCEL);

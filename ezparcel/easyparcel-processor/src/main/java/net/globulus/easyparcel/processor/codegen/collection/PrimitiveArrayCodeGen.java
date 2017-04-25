@@ -5,7 +5,7 @@ import net.globulus.easyparcel.processor.codegen.GenericCodeGen;
 
 import java.io.IOException;
 
-import javawriter.JavaWriter;
+import javawriter.EzpJavaWriter;
 
 import static net.globulus.easyparcel.processor.util.FrameworkUtil.PARAM_PARCEL;
 import static net.globulus.easyparcel.processor.util.FrameworkUtil.PARAM_SOURCE;
@@ -21,7 +21,7 @@ public class PrimitiveArrayCodeGen extends GenericCodeGen {
   }
 
   @Override
-  public void generateWriteToParcel(ParcelableField field, JavaWriter jw) throws IOException  {
+  public void generateWriteToParcel(ParcelableField field, EzpJavaWriter jw) throws IOException  {
     jw.emitStatement("%s.writeInt( (%s.%s != null ? %s.%s.length : -1) )",
         PARAM_PARCEL, PARAM_SOURCE, field.getmFieldName(),
         PARAM_SOURCE, field.getmFieldName());
@@ -32,7 +32,7 @@ public class PrimitiveArrayCodeGen extends GenericCodeGen {
   }
 
   @Override
-  public void generateReadFromParcel(ParcelableField field, JavaWriter jw) throws IOException {
+  public void generateReadFromParcel(ParcelableField field, EzpJavaWriter jw) throws IOException {
     jw.emitStatement("int %sLengthHelper = -1", field.getmFieldName());
     jw.emitStatement("%sLengthHelper = %s.readInt()", field.getmFieldName(),
         PARAM_PARCEL);

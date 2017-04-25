@@ -12,7 +12,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.tools.JavaFileObject;
 
-import javawriter.JavaWriter;
+import javawriter.EzpJavaWriter;
 
 /**
  * Created by gordanglavas on 01/10/16.
@@ -31,7 +31,7 @@ public class ParcelerListCodeGen {
 
 			JavaFileObject jfo = filer.createSourceFile(packageName + "." + className, lastElement);
 			Writer writer = jfo.openWriter();
-			JavaWriter jw = new JavaWriter(writer);
+			EzpJavaWriter jw = new EzpJavaWriter(writer);
 			jw.emitPackage(packageName);
 			jw.emitImports("java.util.Map");
 			jw.emitImports("java.util.HashMap");
