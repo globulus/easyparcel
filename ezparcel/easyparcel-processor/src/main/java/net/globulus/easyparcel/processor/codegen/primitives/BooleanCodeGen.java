@@ -16,12 +16,12 @@ public class BooleanCodeGen implements FieldCodeGen {
   @Override
   public void generateWriteToParcel(ParcelableField field, EzpJavaWriter jw) throws IOException {
     jw.emitStatement("%s.writeByte((byte) (%s.%s ? 1 : 0))", PARAM_PARCEL,
-        PARAM_SOURCE, field.getmFieldName());
+        PARAM_SOURCE, field.getFieldName());
   }
 
   @Override
   public void generateReadFromParcel(ParcelableField field, EzpJavaWriter jw) throws IOException  {
     jw.emitStatement("%s.%s = (%s.readByte() == 1)", PARAM_TARGET,
-        field.getmFieldName(), PARAM_PARCEL);
+        field.getFieldName(), PARAM_PARCEL);
   }
 }

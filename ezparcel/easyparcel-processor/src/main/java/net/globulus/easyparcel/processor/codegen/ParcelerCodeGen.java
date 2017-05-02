@@ -191,9 +191,9 @@ public class ParcelerCodeGen {
 			if (gen == null) { // Already checked before, but let's check it again
 				ProcessorLog.error(field.getElement(),
 						"The field %s is not Parcelable or of unsupported type",
-						field.getmFieldName());
+						field.getFieldName());
 
-				throw new IOException("Unparcelable Field " + field.getmFieldName());
+				throw new IOException("Unparcelable Field " + field.getFieldName());
 			}
 
 			jw.emitEmptyLine();
@@ -216,9 +216,9 @@ public class ParcelerCodeGen {
 			if (gen == null) { // Already checked before, but let's check it again
 				ProcessorLog.error(field.getElement(),
 						"The field %s is not Parcelable or of unsupported type",
-						field.getmFieldName());
+						field.getFieldName());
 
-				throw new IOException("Unparcelable Field " + field.getmFieldName());
+				throw new IOException("Unparcelable Field " + field.getFieldName());
 			}
 
 			jw.emitEmptyLine();

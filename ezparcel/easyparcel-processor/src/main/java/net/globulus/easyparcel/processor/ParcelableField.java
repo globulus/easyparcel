@@ -79,7 +79,7 @@ public class ParcelableField {
 		return element;
 	}
 
-	public String getmFieldName() {
+	public String getFieldName() {
 		return mFieldName;
 	}
 

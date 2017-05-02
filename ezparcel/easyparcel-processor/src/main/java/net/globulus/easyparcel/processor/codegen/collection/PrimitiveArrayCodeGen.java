@@ -23,27 +23,27 @@ public class PrimitiveArrayCodeGen extends GenericCodeGen {
   @Override
   public void generateWriteToParcel(ParcelableField field, EzpJavaWriter jw) throws IOException  {
     jw.emitStatement("%s.writeInt( (%s.%s != null ? %s.%s.length : -1) )",
-        PARAM_PARCEL, PARAM_SOURCE, field.getmFieldName(),
-        PARAM_SOURCE, field.getmFieldName());
-    jw.beginControlFlow("if (%s.%s != null)", PARAM_SOURCE, field.getmFieldName());
+        PARAM_PARCEL, PARAM_SOURCE, field.getFieldName(),
+        PARAM_SOURCE, field.getFieldName());
+    jw.beginControlFlow("if (%s.%s != null)", PARAM_SOURCE, field.getFieldName());
     jw.emitStatement("%s.write%s(%s.%s)", PARAM_PARCEL, mMethodSuffix, PARAM_SOURCE,
-        field.getmFieldName());
+        field.getFieldName());
     jw.endControlFlow();
   }
 
   @Override
   public void generateReadFromParcel(ParcelableField field, EzpJavaWriter jw) throws IOException {
-    jw.emitStatement("int %sLengthHelper = -1", field.getmFieldName());
-    jw.emitStatement("%sLengthHelper = %s.readInt()", field.getmFieldName(),
+    jw.emitStatement("int %sLengthHelper = -1", field.getFieldName());
+    jw.emitStatement("%sLengthHelper = %s.readInt()", field.getFieldName(),
         PARAM_PARCEL);
-    jw.beginControlFlow("if (%sLengthHelper >= 0)", field.getmFieldName());
-    jw.emitStatement("%s[] %sArrayHelper = new %s[%sLengthHelper]", mType, field.getmFieldName(),
-			mType, field.getmFieldName());
-    jw.emitStatement("%s.read%s(%sArrayHelper)", PARAM_PARCEL, mMethodSuffix, field.getmFieldName());
-    jw.emitStatement("%s.%s = %sArrayHelper", PARAM_TARGET, field.getmFieldName(),
-        field.getmFieldName());
+    jw.beginControlFlow("if (%sLengthHelper >= 0)", field.getFieldName());
+    jw.emitStatement("%s[] %sArrayHelper = new %s[%sLengthHelper]", mType, field.getFieldName(),
+			mType, field.getFieldName());
+    jw.emitStatement("%s.read%s(%sArrayHelper)", PARAM_PARCEL, mMethodSuffix, field.getFieldName());
+    jw.emitStatement("%s.%s = %sArrayHelper", PARAM_TARGET, field.getFieldName(),
+        field.getFieldName());
     jw.nextControlFlow("else");
-    jw.emitStatement("%s.%s = null", PARAM_TARGET, field.getmFieldName());
+    jw.emitStatement("%s.%s = null", PARAM_TARGET, field.getFieldName());
     jw.endControlFlow();
   }
 }

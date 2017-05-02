@@ -16,11 +16,11 @@ public class StringListCodeGen implements FieldCodeGen {
   @Override
   public void generateWriteToParcel(ParcelableField field, EzpJavaWriter jw) throws IOException  {
     jw.emitStatement("%s.writeStringList(%s.%s)", PARAM_PARCEL, PARAM_SOURCE,
-        field.getmFieldName());
+        field.getFieldName());
   }
 
   @Override
   public void generateReadFromParcel(ParcelableField field, EzpJavaWriter jw) throws IOException {
-    jw.emitStatement("%s.%s = %s.createStringArrayList()", PARAM_TARGET, field.getmFieldName(), PARAM_PARCEL);
+    jw.emitStatement("%s.%s = %s.createStringArrayList()", PARAM_TARGET, field.getFieldName(), PARAM_PARCEL);
   }
 }

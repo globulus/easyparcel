@@ -20,6 +20,6 @@ public class SerializeableCodeGen extends GenericCodeGen {
   public void generateReadFromParcel(ParcelableField field, EzpJavaWriter jw) throws IOException {
 
     jw.emitStatement("%s.%s = (%s) %s.readSerializable()", PARAM_TARGET,
-        field.getmFieldName(), field.getType(), PARAM_PARCEL);
+        field.getFieldName(), field.getType(), PARAM_PARCEL);
   }
 }

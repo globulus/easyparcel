@@ -17,12 +17,12 @@ public class ParcelableCodeGen implements FieldCodeGen {
   @Override
   public void generateWriteToParcel(ParcelableField field, EzpJavaWriter jw) throws IOException {
     jw.emitStatement("%s.writeParcelable(%s.%s, %s)", PARAM_PARCEL, PARAM_SOURCE,
-        field.getmFieldName(), PARAM_FLAGS);
+        field.getFieldName(), PARAM_FLAGS);
   }
 
   @Override
   public void generateReadFromParcel(ParcelableField field, EzpJavaWriter jw) throws IOException {
     jw.emitStatement("%s.%s = %s.readParcelable(%s.class.getClassLoader())",
-            PARAM_TARGET, field.getmFieldName(), PARAM_PARCEL, field.getType());
+            PARAM_TARGET, field.getFieldName(), PARAM_PARCEL, field.getType());
   }
 }

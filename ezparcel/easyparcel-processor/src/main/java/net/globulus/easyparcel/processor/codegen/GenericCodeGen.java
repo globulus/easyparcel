@@ -21,11 +21,11 @@ public class GenericCodeGen implements FieldCodeGen {
   @Override
   public void generateWriteToParcel(ParcelableField field, EzpJavaWriter jw) throws IOException {
     jw.emitStatement("%s.write%s(%s.%s)", PARAM_PARCEL, mMethodSuffix, PARAM_SOURCE,
-        field.getmFieldName());
+        field.getFieldName());
   }
 
   @Override
   public void generateReadFromParcel(ParcelableField field, EzpJavaWriter jw) throws IOException  {
-    jw.emitStatement("%s.%s = %s.read%s()", PARAM_TARGET, field.getmFieldName(), PARAM_PARCEL, mMethodSuffix);
+    jw.emitStatement("%s.%s = %s.read%s()", PARAM_TARGET, field.getFieldName(), PARAM_PARCEL, mMethodSuffix);
   }
 }
