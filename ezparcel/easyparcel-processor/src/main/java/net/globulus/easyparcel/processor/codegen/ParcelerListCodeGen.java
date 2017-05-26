@@ -35,6 +35,7 @@ public class ParcelerListCodeGen {
 			jw.emitPackage(packageName);
 			jw.emitImports("java.util.Map");
 			jw.emitImports("java.util.HashMap");
+			jw.emitImports("java.util.Set");
 			jw.emitImports("android.os.Parcelable");
 			jw.emitImports(FrameworkUtil.getQualifiedName(FrameworkUtil.getParcelerClassName()));
 			jw.emitImports(FrameworkUtil.getQualifiedName(FrameworkUtil.getParcelablesClassName()));
@@ -62,6 +63,11 @@ public class ParcelerListCodeGen {
 					EnumSet.of(Modifier.PUBLIC), "Class<T>", "clazz");
 			jw.emitStatement("return map.get(clazz)");
 			jw.endMethod();
+
+			jw.beginMethod("Set<Class<? extends Parcelable>>", "getAllClasses", EnumSet.of(Modifier.PUBLIC));
+			jw.emitStatement("return map.keySet()");
+			jw.endMethod();
+
 			jw.endType();
 
 			jw.emitField(innerClassName, "INSTANCE", EnumSet.of(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL),

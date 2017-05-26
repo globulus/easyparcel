@@ -7,19 +7,19 @@ import javax.lang.model.type.TypeMirror;
 public class CodeGenInfo {
 
   private TypeMirror mGenericsType;
-  private FieldCodeGen mCodeGene;
+  private FieldCodeGen mCodeGen;
 
   public CodeGenInfo(FieldCodeGen generator) {
-    mCodeGene = generator;
+    mCodeGen = generator;
   }
 
   public CodeGenInfo(FieldCodeGen generator, TypeMirror genericsType) {
-    mCodeGene = generator;
+    mCodeGen = generator;
     mGenericsType = genericsType;
   }
 
   public FieldCodeGen getCodeGenerator() {
-    return mCodeGene;
+    return mCodeGen;
   }
 
   public TypeMirror getGenericsType() {

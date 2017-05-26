@@ -20,8 +20,7 @@ public final class Parcelables {
 		sParcelerList = parcelerList;
 	}
 
-	@Nullable
-	private static Parceler getParcelerForClass(@NonNull Class clazz) {
+	private static ParcelerList getParcelerList() {
 		if (sParcelerList == null) {
 			try {
 				// Initiate class loading for the ParcelerList implementation class
@@ -30,7 +29,24 @@ public final class Parcelables {
 				throw new AssertionError(e);  // Can't happen
 			}
 		}
-		return sParcelerList.getParcelerForClass(clazz);
+		return sParcelerList;
+	}
+
+	@Nullable
+	private static Parceler getParcelerForClass(@NonNull Class clazz) {
+		return getParcelerForClass(clazz, true);
+	}
+
+	@Nullable
+	private static Parceler getParcelerForClass(@NonNull Class clazz, boolean retry) {
+		Parceler parceler = getParcelerList().getParcelerForClass(clazz);
+		if (parceler != null) {
+			return parceler;
+		}
+		if (retry) {
+			return getParcelerForClass(clazz, false);
+		}
+		return null;
 	}
 
 	public static <T extends Parcelable> void writeToParcel(@NonNull T object,
@@ -62,6 +78,27 @@ public final class Parcelables {
 
 	public static <T extends Parcelable> Parcelable.Creator<T> getCreator(@NonNull Class<T> clazz) {
 		Parceler<T> parceler = getParcelerForClass(clazz);
+		if (parceler == null) {
+			return null;
+		}
 		return parceler.getCreator();
+	}
+
+	public static class Utils {
+
+		public static String printParcelerList() {
+			StringBuilder sb = new StringBuilder();
+			for (Class<? extends Parcelable> clazz : getParcelerList().getAllClasses()) {
+				Parceler parceler = getParcelerForClass(clazz);
+				sb.append(clazz.getName()).append(" => ");
+				if (parceler == null) {
+					sb.append("null");
+				} else {
+					sb.append(parceler.getClass().getName());
+				}
+				sb.append('\n');
+			}
+			return sb.toString();
+		}
 	}
 }
