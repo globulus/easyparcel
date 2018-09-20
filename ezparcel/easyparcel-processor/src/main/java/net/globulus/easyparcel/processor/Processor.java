@@ -2,11 +2,15 @@ package net.globulus.easyparcel.processor;
 
 import net.globulus.easyparcel.annotation.EasyParcel;
 import net.globulus.easyparcel.annotation.Include;
+import net.globulus.easyparcel.processor.codegen.MergeFileCodeGen;
 import net.globulus.easyparcel.processor.codegen.ParcelerCodeGen;
 import net.globulus.easyparcel.processor.codegen.ParcelerListCodeGen;
+import net.globulus.easyparcel.processor.util.FrameworkUtil;
 import net.globulus.easyparcel.processor.util.ProcessorLog;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -63,6 +67,7 @@ public class Processor extends AbstractProcessor {
 		List<String> parcelerNames = new ArrayList<>();
 		ParcelerCodeGen parcelerCodeGen = new ParcelerCodeGen(mElementUtils, mFiler);
 		Element lastElement = null;
+		Boolean shouldMerge = null;
 		for (Element element : roundEnv.getElementsAnnotatedWith(EasyParcel.class)) {
 			if (!isValid(element)) {
 				continue;
@@ -75,6 +80,13 @@ public class Processor extends AbstractProcessor {
 			boolean autoInclude = annotation.autoInclude();
 			int[] ignoreModifiers = annotation.ignoreModifiers();
 //			boolean ignoreSuperclass = annotation.ignoreSuperclass(); TODO
+			if (annotation.bottom()) {
+				shouldMerge = true;
+			} else {
+			    shouldMerge = false;
+            }
+
+            ProcessorLog.note(element, " ANALYZING");
 
 			List<? extends Element> memberFields = mElementUtils.getAllMembers((TypeElement) element);
 
@@ -130,7 +142,43 @@ public class Processor extends AbstractProcessor {
 			}
 		}
 
-		new ParcelerListCodeGen().generate(mFiler, lastElement, annotatedClasses, parcelerNames);
+		if (shouldMerge == null) {
+		    return true;
+        }
+		ParcelerListCodeGen.Input input = new ParcelerListCodeGen.Input(shouldMerge ? lastElement : null, annotatedClasses, parcelerNames);
+		if (shouldMerge) {
+		    ProcessorLog.note(lastElement, "MERGING");
+			ByteBuffer buffer = ByteBuffer.allocate(50_000);
+			try {
+				for (int i = 0; i < Integer.MAX_VALUE; i++) {
+					Class mergeClass = Class.forName(FrameworkUtil.getEasyParcelPackageName() + "." + MergeFileCodeGen.CLASS_NAME + i, true, getClass().getClassLoader());
+
+                    ProcessorLog.note(lastElement, "FOUND MERGE CLASS");
+					buffer.put((byte[]) mergeClass.getField(MergeFileCodeGen.MERGE_FIELD_NAME).get(null));
+					if (!mergeClass.getField(MergeFileCodeGen.NEXT_FIELD_NAME).getBoolean(null)) {
+						break;
+					}
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			try {
+				ParcelerListCodeGen.Input merge = ParcelerListCodeGen.Input.fromBytes(buffer.array());
+				input = input.mergedUp(merge);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			new ParcelerListCodeGen().generate(mFiler, input);
+		} else {
+            ProcessorLog.note(lastElement, "WRITING MERGE");
+			new MergeFileCodeGen().generate(mFiler, input);
+		}
 
 		return true;
 	}

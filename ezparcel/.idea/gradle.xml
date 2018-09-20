@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/easyparcel" />
             <option value="$PROJECT_DIR$/easyparcel-annotations" />
             <option value="$PROJECT_DIR$/easyparcel-processor" />
+            <option value="$PROJECT_DIR$/libtop" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

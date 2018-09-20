@@ -5,13 +5,14 @@ import android.os.Parcelable;
 
 import net.globulus.easyparcel.Parcelables;
 import net.globulus.easyparcel.annotation.EasyParcel;
+import net.globulus.easyparcel.libtop.LibModel;
 
 import java.util.Date;
 
 /**
  * Created by gordanglavas on 30/09/16.
  */
-@EasyParcel
+@EasyParcel(bottom = true)
 public class Goal implements Parcelable {
 
 	public int goalType;

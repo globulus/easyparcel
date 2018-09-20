@@ -14,4 +14,5 @@ public @interface EasyParcel {
 	boolean autoInclude() default true;
 	int[] ignoreModifiers() default { };
 //	boolean ignoreSuperclass() default false;
+	boolean bottom() default false;
 }

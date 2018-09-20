@@ -1,1 +1,1 @@
-include ':app', ':easyparcel-annotations', ':easyparcel-processor', ':easyparcel'
+include ':app', ':easyparcel-annotations', ':easyparcel-processor', ':easyparcel', ':libtop'
