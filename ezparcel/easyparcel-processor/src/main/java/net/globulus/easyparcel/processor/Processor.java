@@ -82,7 +82,7 @@ public class Processor extends AbstractProcessor {
 //			boolean ignoreSuperclass = annotation.ignoreSuperclass(); TODO
 			if (annotation.bottom()) {
 				shouldMerge = true;
-			} else {
+			} else if (shouldMerge == null) {
 			    shouldMerge = false;
             }
 
