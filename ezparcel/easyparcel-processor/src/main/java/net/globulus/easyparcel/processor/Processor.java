@@ -86,7 +86,7 @@ public class Processor extends AbstractProcessor {
 			    shouldMerge = false;
             }
 
-            ProcessorLog.note(element, " ANALYZING");
+//            ProcessorLog.note(element, " ANALYZING");
 
 			List<? extends Element> memberFields = mElementUtils.getAllMembers((TypeElement) element);
 
@@ -147,13 +147,13 @@ public class Processor extends AbstractProcessor {
         }
 		ParcelerListCodeGen.Input input = new ParcelerListCodeGen.Input(shouldMerge ? lastElement : null, annotatedClasses, parcelerNames);
 		if (shouldMerge) {
-		    ProcessorLog.note(lastElement, "MERGING");
+//		    ProcessorLog.note(lastElement, "MERGING");
 			ByteBuffer buffer = ByteBuffer.allocate(50_000);
 			try {
 				for (int i = 0; i < Integer.MAX_VALUE; i++) {
 					Class mergeClass = Class.forName(FrameworkUtil.getEasyParcelPackageName() + "." + MergeFileCodeGen.CLASS_NAME + i, true, getClass().getClassLoader());
 
-                    ProcessorLog.note(lastElement, "FOUND MERGE CLASS");
+//                    ProcessorLog.note(lastElement, "FOUND MERGE CLASS");
 					buffer.put((byte[]) mergeClass.getField(MergeFileCodeGen.MERGE_FIELD_NAME).get(null));
 					if (!mergeClass.getField(MergeFileCodeGen.NEXT_FIELD_NAME).getBoolean(null)) {
 						break;
@@ -176,7 +176,7 @@ public class Processor extends AbstractProcessor {
 			}
 			new ParcelerListCodeGen().generate(mFiler, input);
 		} else {
-            ProcessorLog.note(lastElement, "WRITING MERGE");
+//            ProcessorLog.note(lastElement, "WRITING MERGE");
 			new MergeFileCodeGen().generate(mFiler, input);
 		}
 
