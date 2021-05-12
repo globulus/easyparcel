@@ -165,9 +165,7 @@ public class SupportedTypes {
       ArrayType arrayType = (ArrayType) element.asType();
 
       TypeMirror arrayOf = arrayType.getComponentType();
-
-      ProcessorLog.warn(element, "array type %s", arrayType.toString());
-      ProcessorLog.warn(element, "elem type %s is string: " + arrayOf.toString().equals(String.class.getName()), arrayOf.toString());
+      String arrayOfTypeString = arrayOf.toString().substring(arrayOf.toString().lastIndexOf(' ') + 1); // to handle weird annotation issues with Kapt
 
       if (arrayOf.getKind() == TypeKind.CHAR) {
         return new CodeGenInfo(typeMap.get(TYPE_KEY_CHAR_ARRAY));
@@ -197,7 +195,7 @@ public class SupportedTypes {
         return new CodeGenInfo(typeMap.get(TYPE_KEY_LONG_ARRAY));
       }
 
-      if (arrayOf.toString().equals(String.class.getName())) {
+      if (arrayOfTypeString.equals(String.class.getName())) {
         return new CodeGenInfo(typeMap.get(TYPE_KEY_STRING_ARRAY));
       }
 
