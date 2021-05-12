@@ -166,6 +166,9 @@ public class SupportedTypes {
 
       TypeMirror arrayOf = arrayType.getComponentType();
 
+      ProcessorLog.warn(element, "array type %s", arrayType.toString());
+      ProcessorLog.warn(element, "elem type %s is string: " + arrayOf.toString().equals(String.class.getName()), arrayOf.toString());
+
       if (arrayOf.getKind() == TypeKind.CHAR) {
         return new CodeGenInfo(typeMap.get(TYPE_KEY_CHAR_ARRAY));
       }
