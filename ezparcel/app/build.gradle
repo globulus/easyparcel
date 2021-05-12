@@ -1,11 +1,13 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 29
     defaultConfig {
         applicationId "net.globulus.easyparcelsample"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -28,11 +30,15 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'com.android.support:appcompat-v7:23.4.0'
     testImplementation 'junit:junit:4.12'
 
     implementation project(':libtop')
     implementation project(':easyparcel')
     implementation project(':easyparcel-annotations')
     annotationProcessor project(':easyparcel-processor')
+    kapt project(':easyparcel-processor')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

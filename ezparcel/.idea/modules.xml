@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/easyparcel/easyparcel.iml" filepath="$PROJECT_DIR$/easyparcel/easyparcel.iml" />
-      <module fileurl="file://$PROJECT_DIR$/easyparcel-annotations/easyparcel-annotations.iml" filepath="$PROJECT_DIR$/easyparcel-annotations/easyparcel-annotations.iml" />
-      <module fileurl="file://$PROJECT_DIR$/easyparcel-processor/easyparcel-processor.iml" filepath="$PROJECT_DIR$/easyparcel-processor/easyparcel-processor.iml" />
       <module fileurl="file://$PROJECT_DIR$/ezparcel.iml" filepath="$PROJECT_DIR$/ezparcel.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libtop/libtop.iml" filepath="$PROJECT_DIR$/libtop/libtop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/ezparcel.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/ezparcel.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/easyparcel/ezparcel.easyparcel.iml" filepath="$PROJECT_DIR$/.idea/modules/easyparcel/ezparcel.easyparcel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/easyparcel-annotations/ezparcel.easyparcel-annotations.iml" filepath="$PROJECT_DIR$/.idea/modules/easyparcel-annotations/ezparcel.easyparcel-annotations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/easyparcel-processor/ezparcel.easyparcel-processor.iml" filepath="$PROJECT_DIR$/.idea/modules/easyparcel-processor/ezparcel.easyparcel-processor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libtop/ezparcel.libtop.iml" filepath="$PROJECT_DIR$/.idea/modules/libtop/ezparcel.libtop.iml" />
     </modules>
   </component>
 </project>
